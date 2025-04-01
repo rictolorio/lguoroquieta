@@ -1,0 +1,75 @@
+MAKE DIRECTORY FOR THE PROJECT
+
+-D:\mkdir lguoroquieta
+-cd lguoroquieta
+-D:\lguoroquieta\ mkdir socddriver
+-cd socddriver
+-D:\lguoroquieta\socddriver\ mkdir backend
+-cd backend
+dir to folder created
+
+
+------------------------------
+
+INSTALL VIRTUALENV - GLOBALLY
+
+-pip install virtualenv 
+------------------------------
+
+UPGRADE PIP
+
+-python.exe -m pip install--upgrade pip
+
+---------------------------------
+
+INSTALL ENV IN LOCAL
+
+-virtualenv env
+
+---------------------------------
+
+ACTIVATE VIRTUALENV
+
+-env\scripts\activate
+
+---------------------------------
+
+INSTALL DJANGO - LOCALLY(still in cmd mode)
+
+-pip install django
+-django-admin
+
+---------------------------------
+
+CREATE START PROJECT
+-D:\lguoroquieta\socddriver\backend\ - the address
+
+-django-admin startproject backend .
+----------------------------------------
+
+NOTE: ALWAYS RUN ON CMD MODE IN VSCODE TO AVOID ERROR IN ACTIVATING ENV
+
+----------------------------------------
+
+CREATE PROJECT APP
+-python manage.py startapp citation
+
+citation is an app to crud the violation of the violator through citation ticket with the citation number.
+
+-----------------------------------
+
+INSTALL RESTFRAMEWORK
+--------------------------
+pip install djangorestframework
+
+INSTALL PSYCOPG2 (PostgreSQL)
+------------------------
+pip install psycopg2
+
+
+I observe that creating fields in modely.py must be in single form don't use the last letter is 's'
+
+Many-to-Many relationship 
+
+
+03-20-2025
