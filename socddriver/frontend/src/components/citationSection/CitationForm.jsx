@@ -2,29 +2,11 @@ import React, { useState, useEffect } from "react";
 import { createCitation, fetchViolations } from "./shared/api";
 
 const CitationForm = () => {
-  const [citationData, setCitationData] = useState({
-    citation_no: "",
-    full_name: "",
-    birthday: "",
-    gender: "",
-    age: "",
-    full_address: "",
-    driv_lic: "",
-    exp_date: "",
-    reg_owner: "",
-    reg_address: "",
-    veh_type: "",
-    plate_no: "",
-    crt_reg_no: "",
-    franc_no: "",
-    place_of_viola: "",
-    date_of_viola: "",
-    time_of_viola: "",
-    amounts: "",
-    remarks: "",
-    app_officer: "",
-    violations: []
-  });
+  const [citation_no, setCitationNo] = useState("");
+  const [full_name, setFullName] = useState("");
+  const [selectedViolations, setSelectedViolations] = useState([]);
+   
+ 
 
   const [violations, setViolations] = useState([]);
 
@@ -52,9 +34,37 @@ const CitationForm = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    await createCitation(citationData);
-    alert("Citation saved successfully!");
+  
+    const data = {
+      citation_no,
+      full_name,
+      birthday,
+      gender,
+      age,
+      full_address,
+      driv_lic,
+      exp_date,
+      reg_owner,
+      reg_address,
+      veh_type,
+      plate_no,
+      crt_reg_no,
+      franc_no,
+      place_of_viola,
+      date_of_viola,
+      time_of_viola,
+      amounts,
+      remarks,
+      app_officer,
+      violations: selectedViolations, // Check this variable
+    };
+  
+    console.log("Submitting Data:", data); // Debug request body
+  
+    const response = await createCitation(data);
+    console.log("Response from API:", response);
   };
+  
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md">
@@ -65,11 +75,9 @@ const CitationForm = () => {
           <label className="block text-gray-700 font-medium">Citation No</label>
           <input
             type="text"
-            name="citation_no"
-            value={citationData.citation_no}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
-            required
+            value={citation_no}
+            onChange={(e) => setCitationNo(e.target.value)}
+            placeholder="Citation No"
           />
         </div>
         
@@ -78,10 +86,9 @@ const CitationForm = () => {
           <label className="block text-gray-700 font-medium">Full Name</label>
           <input
             type="text"
-            name="full_name"
-            value={citationData.full_name || ""}
-            onChange={handleChange}
-            className="w-full p-2 border border-gray-300 rounded-md"
+            value={full_name}
+            onChange={(e) => setFullName(e.target.value)}
+            placeholder="Full Name"
           />
         </div>
 
@@ -90,8 +97,8 @@ const CitationForm = () => {
           <input
             type="date"
             name="birthday"
-            value={citationData.birthday || ""}
-            onChange={handleChange}
+            value={birthday}
+            onChange={(e) => setFullName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500"
           />
         </div>

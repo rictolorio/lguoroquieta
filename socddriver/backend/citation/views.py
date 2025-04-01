@@ -5,39 +5,20 @@ from .models import Citation, Violation
 from .serializers import CitationSerializer, ViolationSerializer
 
 class CitationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint for managing Citations (Create, Read, Update, Delete)
-    """
-    queryset = Citation.objects.all()
+    queryset = Citation.objects.prefetch_related('violations')
     serializer_class = CitationSerializer
 
     def create(self, request, *args, **kwargs):
-        """
-        Create a new Citation, associating existing violations by ID.
-        """
-        citation_data = request.data
-        violations_data = citation_data.get("violations", [])
+        data = request.data.copy()
+        violations = data.pop("violations", [])  # Extract violation IDs
+        serializer = self.get_serializer(data=data)
 
-        # Ensure violations are provided as IDs, not full objects
-        violations = Violation.objects.filter(id__in=violations_data)
+        if serializer.is_valid():
+            citation = serializer.save()
+            citation.violations.set(violations)  # Assign many-to-many violations
+            return Response(CitationSerializer(citation).data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-        # Check if all violation IDs are valid
-        if len(violations) != len(violations_data):
-            return Response({"error": "One or more violation IDs are invalid."}, status=status.HTTP_400_BAD_REQUEST)
-
-        # Now create the citation
-        citation_serializer = self.get_serializer(data=citation_data)
-        if citation_serializer.is_valid():
-            citation = citation_serializer.save()
-
-            # Add violations to the citation (many-to-many relation)
-            citation.violations.set(violations)  # This will associate the violations with the citation
-
-            return Response(citation_serializer.data, status=status.HTTP_201_CREATED)
-
-        return Response(citation_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-    # The other methods (update, destroy) remain unchanged
 
 
 
