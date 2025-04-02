@@ -1,28 +1,36 @@
-
+// CitationList.jsx
 import React, { useEffect, useState } from "react";
 import { fetchCitations } from "./shared/api";
 
 const CitationList = ({ selectedCitationNo, setSelectedCitationNo }) => {
   const [citations, setCitations] = useState([]);
+  const [error, setError] = useState(null); // To hold the error state
 
   useEffect(() => {
     const loadCitations = async () => { 
       try {
         const data = await fetchCitations();
         console.log("API Response:", data); // Debugging
-        setCitations(data);
+        setCitations(data); // Update citations with the fetched data
       } catch (error) {
         console.error("Error fetching citations:", error);
+        setError("Error fetching citations. Please try again."); // Set error message
       }
     };
     loadCitations();
   }, []);
 
+  // Handle citation selection
+  const handleSelectCitation = (citationNo) => {
+    setSelectedCitationNo(citationNo); // Update the parent state with selected citation number
+  };
+
   return (
-    <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">     
+    <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">
+      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error */}
       <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
         <thead className="bg-cyan text-white">
-          <tr>           
+          <tr>
             <th className="p-3 text-left">Citation No</th>
             <th className="p-3 text-left">Full Name</th>
             <th className="p-3 text-left">Date of Violation</th>
@@ -38,35 +46,30 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo }) => {
             </tr>
           ) : (
             citations.map((c) => (
-              <tr key={c.citation_no} className="border-b hover:bg-gray-100 transition">
-                <td className="p-3 font-semibold">{c.citation_no}</td>
-                <td className="p-3">{c.full_name}</td>
-                <td className="p-3">{c.date_of_viola}</td>
-                <td className="p-3">
-                  {c.violations.length > 0 ? (
-                    <ul className="list-disc pl-5">
+              <tr key={c.citation_no}>
+                <td>{c.citation_no}</td>
+                <td>{c.full_name}</td>
+                <td>{c.date_of_viola}</td>
+                <td>
+                  {Array.isArray(c.violations) && c.violations.length > 0 ? (
+                    <ul>
                       {c.violations.map((v, index) => (
-                        typeof v === "object" ? (
-                          <li key={index}>{v.or_sec_no} - {v.descriptions}</li>
-                        ) : (
-                          <li key={index}>Loading...</li> // Handle case when IDs appear
-                        )
+                        <li key={index}>
+                          {v.or_sec_no} - {v.description}
+                        </li>
                       ))}
                     </ul>
                   ) : (
-                    "None"
+                    "No violations"
                   )}
                 </td>
-
               </tr>
-
             ))
           )}
         </tbody>
       </table>
     </div>
   );
-
 };
 
 export default CitationList;

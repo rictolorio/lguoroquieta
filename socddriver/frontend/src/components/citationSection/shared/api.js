@@ -1,3 +1,5 @@
+// api.js
+import axios from "axios";
 const API_URL = "http://127.0.0.1:8000";
 
 // Fetch all citations
@@ -7,10 +9,12 @@ export const fetchCitations = async () => {
     if (!res.ok) {
       throw new Error("Failed to fetch citations");
     }
-    return await res.json();
+    const data = await res.json(); // Correct this line
+    console.log("Fetched data:", data); // Log the fetched data
+    return data;
   } catch (error) {
     console.error("Error fetching citations:", error);
-    throw error; // Re-throw the error to handle it elsewhere if needed
+    throw error; // Rethrow the error to handle it in the component
   }
 };
 
@@ -24,30 +28,17 @@ export const fetchViolations = async () => {
     return await res.json();
   } catch (error) {
     console.error("Error fetching violations:", error);
-    throw error; // Re-throw the error to handle it elsewhere if needed
+    throw error;
   }
 };
 
 // Create a citation (including violations)
-export const createCitation = async (data) => {
-  const formattedData = {
-    citation_no: data.citation_no,
-    full_name: data.full_name,
-    violation_ids: data.violations.map((v) => v.id), // Send only IDs
-  };
-
-  const res = await fetch(`${API_URL}/citations/`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(formattedData),
-  });
-
-  const result = await res.json().catch(() => res.text()); // Handle non-JSON errors
-  console.log("API Response:", result); // Log the full response
-
-  return result;
+export const createCitation = async (citationData) => {
+  try {
+    const response = await axios.post(`${API_URL}/citations/`, citationData); // Fix the endpoint if necessary
+    return response.data;
+  } catch (error) {
+    console.error("Error creating citation:", error);
+    throw error;
+  }
 };
-
-
-
-
