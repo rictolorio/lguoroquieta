@@ -51,13 +51,18 @@ const CitationForm = ({ onSuccess }) => {
   // Handle checkbox change for selecting violations
   const handleViolationChange = (e) => {
     const id = parseInt(e.target.value, 10);
-    setFormData((prev) => ({
-      ...prev,
-      violation_ids: e.target.checked
-        ? [...prev.violation_ids, id]
-        : prev.violation_ids.filter((v) => v !== id),
-    }));
+    setFormData((prev) => {
+      const violationIds = prev.violation_ids || [];
+  
+      return {
+        ...prev,
+        violation_ids: e.target.checked
+          ? [...violationIds, id]   // Add if checked
+          : violationIds.filter((v) => v !== id), // Remove if unchecked
+      };
+    });
   };
+  
 
   // Handle form submission
   const handleSubmit = async (e) => {
@@ -364,10 +369,10 @@ const CitationForm = ({ onSuccess }) => {
                 <input
                   type="checkbox"
                   value={violation.id}
-                  checked={formData.violation_ids.includes(violation.id)}
+                  checked={formData.violation_ids.includes((violation.id))}
                   onChange={handleViolationChange}
-                  className="h-4 w-4"
                 />
+
                 <span>{violation.or_sec_no} - {violation.descriptions}</span>
               </label>
             ))}

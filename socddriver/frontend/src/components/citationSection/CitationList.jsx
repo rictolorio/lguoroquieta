@@ -55,7 +55,7 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo }) => {
                     <ul>
                       {c.violations.map((v, index) => (
                         <li key={index}>
-                          {v.or_sec_no} - {v.description}
+                          {v.or_sec_no} - {v.descriptions}
                         </li>
                       ))}
                     </ul>
