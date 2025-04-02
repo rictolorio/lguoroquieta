@@ -1,33 +1,27 @@
-// CitationList.jsx
 import React, { useEffect, useState } from "react";
 import { fetchCitations } from "./shared/api";
 
-const CitationList = ({ selectedCitationNo, setSelectedCitationNo }) => {
+const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh }) => {
   const [citations, setCitations] = useState([]);
-  const [error, setError] = useState(null); // To hold the error state
+  const [error, setError] = useState(null); 
+
+  // Function to load citations from API
+  const loadCitations = async () => {
+    try {
+      const data = await fetchCitations();
+      setCitations(data);
+    } catch (error) {
+      setError("Error fetching citations. Please try again.");
+    }
+  };
 
   useEffect(() => {
-    const loadCitations = async () => { 
-      try {
-        const data = await fetchCitations();
-        console.log("API Response:", data); // Debugging
-        setCitations(data); // Update citations with the fetched data
-      } catch (error) {
-        console.error("Error fetching citations:", error);
-        setError("Error fetching citations. Please try again."); // Set error message
-      }
-    };
-    loadCitations();
-  }, []);
-
-  // Handle citation selection
-  const handleSelectCitation = (citationNo) => {
-    setSelectedCitationNo(citationNo); // Update the parent state with selected citation number
-  };
+    loadCitations(); // Fetch citations on component mount
+  }, [refresh]); // Runs again when `refresh` changes
 
   return (
     <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">
-      {error && <div className="text-red-500 mb-4">{error}</div>} {/* Display error */}
+      {error && <div className="text-red-500 mb-4">{error}</div>} 
       <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
         <thead className="bg-cyan text-white">
           <tr>
@@ -46,24 +40,27 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo }) => {
             </tr>
           ) : (
             citations.map((c) => (
-              <tr key={c.citation_no}>
-                <td>{c.citation_no}</td>
-                <td>{c.full_name}</td>
-                <td>{c.date_of_viola}</td>
-                <td>
-                  {Array.isArray(c.violations) && c.violations.length > 0 ? (
-                    <ul>
-                      {c.violations.map((v, index) => (
-                        <li key={index}>
-                          {v.or_sec_no} - {v.descriptions}
-                        </li>
-                      ))}
-                    </ul>
-                  ) : (
-                    "No violations"
-                  )}
-                </td>
-              </tr>
+              <React.Fragment key={c.citation_no}>
+                <tr onClick={() => setSelectedCitationNo(c.citation_no)}>
+                  <td>{c.citation_no}</td>
+                  <td>{c.full_name}</td>
+                  <td>{c.date_of_viola}</td>
+                  <td>
+                    {c.violations?.length > 0 ? (
+                      <ul>
+                        {c.violations.map((v, index) => (
+                          <li key={index}>{v.or_sec_no} - {v.descriptions}</li>
+                        ))}
+                      </ul>
+                    ) : "No violations"}
+                  </td>
+                </tr>
+                <tr>
+                  <td colSpan="4">
+                    <hr style={{ border: "1px solid #ccc", margin: "10px 0" }} />
+                  </td>
+                </tr>
+              </React.Fragment>
             ))
           )}
         </tbody>

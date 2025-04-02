@@ -59,6 +59,7 @@ const CitationForm = ({ onSuccess }) => {
         violation_ids: e.target.checked
           ? [...violationIds, id]   // Add if checked
           : violationIds.filter((v) => v !== id), // Remove if unchecked
+          
       };
     });
   };
@@ -104,13 +105,41 @@ const CitationForm = ({ onSuccess }) => {
     try {
       const response = await createCitation(citationData);
       if (response && response.citation_no) {
-        setSuccess("Citation successfully created!");
-        onSuccess(); // Refresh citation list
+        setSuccess("Citation successfully created!");      
+        onSuccess(); 
+        
+        setRefresh((prev) => prev + 1);// Refresh citation list
+        setFormData({ 
+          citation_no: "",
+          full_name: "",
+          birthday: "",
+          age: "",
+          gender: "",
+          full_address: "",
+          driv_lic: "",
+          exp_date: "",
+          reg_owner: "",
+          reg_address: "",
+          veh_type: "",
+          plate_no: "",
+          crt_reg_no: "",
+          franc_no: "",
+          place_of_viola: "",
+          date_of_viola: "",
+          time_of_viola: "",
+          amounts: "",
+          remarks: "",
+          app_officer: "",
+
+          violation_ids: [] 
+        }); // Reset form
+       
+        
       } else {
         setError(response.detail || "Failed to create citation");
       }
     } catch (error) {
-      setError("Error submitting citation.");
+      setError("");
       console.error("Submission error:", error);
     }
   };
