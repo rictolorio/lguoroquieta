@@ -114,28 +114,29 @@ const CitationForm = ({ onSuccess }) => {
   };
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md">
-      <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+    <div className="h-screen flex flex-col">
+       <div className="flex-grow overflow-auto p-4">
+       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
         <div className="mb-4">
-          <label className="block text-gray-700">Citation No</label>
+          <label className="block text-gray-700 font-medium">Citation No</label>
           <input
             type="text"
             name="citation_no"
             value={formData.citation_no}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full h-10 p-2 border rounded-md resize-none"
             required
           />
         </div>
 
         <div className="mb-4">
-          <label className="block text-gray-700">Full Name</label>
+          <label className="block text-gray-700 font-medium">Full Name</label>
           <input
             type="text"
             name="full_name"
             value={formData.full_name}
             onChange={handleChange}
-            className="w-full p-2 border rounded"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -147,7 +148,7 @@ const CitationForm = ({ onSuccess }) => {
             name="birthday"
             value={formData.birthday}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -158,7 +159,7 @@ const CitationForm = ({ onSuccess }) => {
             name="gender"
             value={formData.gender}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           >
             <option value="">Select Gender</option>
             <option value="Male">Male</option>
@@ -174,7 +175,7 @@ const CitationForm = ({ onSuccess }) => {
             name="age"
             value={formData.age}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -186,7 +187,7 @@ const CitationForm = ({ onSuccess }) => {
             name="full_address"
             value={formData.full_address}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+           className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -198,7 +199,7 @@ const CitationForm = ({ onSuccess }) => {
             name="driv_lic"
             value={formData.driv_lic}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -210,7 +211,7 @@ const CitationForm = ({ onSuccess }) => {
             name="exp_date"
             value={formData.exp_date}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -222,7 +223,7 @@ const CitationForm = ({ onSuccess }) => {
             name="reg_owner"
             value={formData.reg_owner}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -234,7 +235,7 @@ const CitationForm = ({ onSuccess }) => {
             name="reg_address"
             value={formData.reg_address}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -246,7 +247,7 @@ const CitationForm = ({ onSuccess }) => {
             name="veh_type"
             value={formData.veh_type}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -258,7 +259,7 @@ const CitationForm = ({ onSuccess }) => {
             name="plate_no"
             value={formData.plate_no}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -270,7 +271,7 @@ const CitationForm = ({ onSuccess }) => {
             name="crt_reg_no"
             value={formData.crt_reg_no}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -282,7 +283,7 @@ const CitationForm = ({ onSuccess }) => {
             name="franc_no"
             value={formData.franc_no}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -294,7 +295,7 @@ const CitationForm = ({ onSuccess }) => {
             name="place_of_viola"
             value={formData.place_of_viola}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -306,7 +307,7 @@ const CitationForm = ({ onSuccess }) => {
             name="date_of_viola"
             value={formData.date_of_viola}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -318,7 +319,7 @@ const CitationForm = ({ onSuccess }) => {
             name="time_of_viola"
             value={formData.time_of_viola}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
@@ -330,60 +331,64 @@ const CitationForm = ({ onSuccess }) => {
             name="amounts"
             value={formData.amounts}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md resize-none"
           />
         </div>
 
+       
         {/* Remarks */}
-        <div className="mb-4">
+        <div className="w-2/2">
           <label className="block text-gray-700 font-medium">Remarks</label>
-          <input
-            type="text"
-            name="remarks"
+          <textarea
+            className="w-full h-20 p-2 border rounded-md resize-none"
             value={formData.remarks}
-            onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            onChange={(e) => setFormData({ ...formData, remarks: e.target.value })}
           />
         </div>
 
+        {/* Violations */}
+        <div className="w-2/2">
+          <label className="block text-gray-700 font-medium">Violations</label>
+          <div className="border p-2 w-full rounded-md h-20 overflow-y-auto space-y-2">
+            {violations.map((violation) => (
+              <label key={violation.id} className="flex items-center space-x-2">
+                <input
+                  type="checkbox"
+                  value={violation.id}
+                  checked={formData.violation_ids.includes(violation.id)}
+                  onChange={handleViolationChange}
+                />
+                <span>{violation.or_sec_no} - {violation.descriptions}</span>
+              </label>
+            ))}
+          </div>
+       
+      </div>
+
+        {/* App Officer & Save Button (First Row) */}
+      <div className="mb-4 flex gap-2">
         {/* App Officer */}
-        <div className="mb-4">
+        <div className="w-3/4">
           <label className="block text-gray-700 font-medium">App Officer</label>
           <input
             type="text"
             name="app_officer"
             value={formData.app_officer}
             onChange={handleChange}
-            className="w-full p-2 border rounded-md"
+            className="w-full h-10 p-2 border rounded-md"
           />
         </div>
 
-        {/* Violations */}
-        <div className="mb-4">
-          <label className="block text-gray-700 font-medium">Violations</label>
-          <div className="space-y-2">
-            {violations.map((violation) => (
-              <label key={violation.id} className="flex items-center space-x-2">
-                <input
-                  type="checkbox"
-                  value={violation.id}
-                  checked={formData.violation_ids.includes((violation.id))}
-                  onChange={handleViolationChange}
-                />
-
-                <span>{violation.or_sec_no} - {violation.descriptions}</span>
-              </label>
-            ))}
-          </div>
-        </div>
-
-        {/* Submit Button */}
-        <div className="col-span-2 text-center">
-          <button type="submit" className="bg-blue-500 text-white py-2 px-4 rounded">
+        {/* Save Button */}
+        <div className="w-4/4 flex items-end">
+          <button type="submit" className="bg-cyan text-white w-full py-2 px-4 rounded">
             Save Citation
           </button>
         </div>
+      </div>
       </form>
+       </div>
+      
 
       {/* Error and Success messages */}
       {error && <div className="text-red-600">{error}</div>}
