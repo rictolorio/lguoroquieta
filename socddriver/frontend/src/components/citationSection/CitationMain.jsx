@@ -3,7 +3,7 @@ import CitationForm from "./CitationForm";
 import CitationList from "./CitationList";
 
 const CitationMain = () => {
-  const [refresh, setRefresh] = useState(0); // State to trigger refresh
+  const [refresh, setRefresh] = useState(false); // State to trigger refresh
 
   return (
     <div className="grid grid-cols-2 gap-6 p-6 h-screen">

@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchViolations, createCitation } from "./shared/api"; // Make sure the path is correct
+import { fetchViolations, createCitation } from "./shared/api";
 
 const CitationForm = ({ onSuccess }) => {
   const [formData, setFormData] = useState({
@@ -23,18 +23,17 @@ const CitationForm = ({ onSuccess }) => {
     amounts: "",
     remarks: "",
     app_officer: "",
-    violation_ids: [], // To store selected violation IDs
+    violation_ids: [],
   });
 
   const [violations, setViolations] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
-  // Load violations on component mount
   useEffect(() => {
     const loadViolations = async () => {
       try {
-        const data = await fetchViolations(); // Assume you have this function
+        const data = await fetchViolations();
         setViolations(data);
       } catch (error) {
         console.error("Error loading violations:", error);
@@ -43,73 +42,45 @@ const CitationForm = ({ onSuccess }) => {
     loadViolations();
   }, []);
 
-  // Handle input changes for form fields
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  // Handle checkbox change for selecting violations
   const handleViolationChange = (e) => {
     const id = parseInt(e.target.value, 10);
-    setFormData((prev) => {
-      const violationIds = prev.violation_ids || [];
-  
-      return {
-        ...prev,
-        violation_ids: e.target.checked
-          ? [...violationIds, id]   // Add if checked
-          : violationIds.filter((v) => v !== id), // Remove if unchecked
-          
-      };
-    });
+    setFormData((prev) => ({
+      ...prev,
+      violation_ids: e.target.checked
+        ? [...prev.violation_ids, id]
+        : prev.violation_ids.filter((v) => v !== id),
+    }));
   };
-  
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    try {
+      await submitCitation(formData);  // Submit new citation
+      console.log("✅ Citation added!");
+      
+      setRefresh(prev => !prev); // 🔄 Toggle refresh to trigger update
+    } catch (error) {
+      console.error("❌ Error saving citation:", error);
+    }
+    
     setError("");
     setSuccess("");
 
-    if (!violations || violations.length === 0) {
+    if (!violations.length) {
       setError("No violations available. Please check the violations list.");
       return;
     }
 
-    const citationData = {
-      citation_no: formData.citation_no,
-      full_name: formData.full_name,
-      birthday: formData.birthday,
-      age: formData.age,
-      gender: formData.gender,
-      full_address: formData.full_address,
-      driv_lic: formData.driv_lic,
-      exp_date: formData.exp_date,
-      reg_owner: formData.reg_owner,
-      reg_address: formData.reg_address,
-      veh_type: formData.veh_type,
-      plate_no: formData.plate_no,
-      crt_reg_no: formData.crt_reg_no,
-      franc_no: formData.franc_no,
-      place_of_viola: formData.place_of_viola,
-      date_of_viola: formData.date_of_viola,
-      time_of_viola: formData.time_of_viola,
-      amounts: formData.amounts,
-      remarks: formData.remarks,
-      app_officer: formData.app_officer,
-      violation_ids: formData.violation_ids, // Array of selected violation IDs
-    };
-
-    console.log("Citation data being sent:", citationData);  // Log the data to check the payload
-
     try {
-      const response = await createCitation(citationData);
-      if (response && response.citation_no) {
-        setSuccess("Citation successfully created!");      
-        onSuccess(); 
-        
-        setRefresh((prev) => prev + 1);// Refresh citation list
-        setFormData({ 
+      const response = await createCitation(formData);
+      if (response?.citation_no) {
+        setSuccess("Citation successfully created!");
+        setFormData({
           citation_no: "",
           full_name: "",
           birthday: "",
@@ -130,17 +101,15 @@ const CitationForm = ({ onSuccess }) => {
           amounts: "",
           remarks: "",
           app_officer: "",
-
-          violation_ids: [] 
-        }); // Reset form
-       
-        
+          violation_ids: [],
+        });
+        onSuccess();
       } else {
         setError(response.detail || "Failed to create citation");
       }
     } catch (error) {
-      setError("");
       console.error("Submission error:", error);
+      setError("An error occurred while creating the citation.");
     }
   };
 
