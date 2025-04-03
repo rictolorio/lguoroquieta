@@ -361,8 +361,7 @@ const CitationForm = ({ onSuccess }) => {
                 <span>{violation.or_sec_no} - {violation.descriptions}</span>
               </label>
             ))}
-          </div>
-       
+          </div>       
       </div>
 
         {/* App Officer & Save Button (First Row) */}
