@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { fetchViolations, createCitation } from "./shared/api";
 
-const CitationForm = ({ onSuccess }) => {
+const handleExtend = () => {
+  const citationId = 1; // Replace with actual ID
+  const newDate = "2025-04-05"; // Replace with actual date input
+  extendCitation(citationId, newDate);
+};
+
+const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
   const [formData, setFormData] = useState({
     citation_no: "",
     full_name: "",
@@ -40,10 +46,41 @@ const CitationForm = ({ onSuccess }) => {
       }
     };
     loadViolations();
-  }, []);
+
+    if (selectedCitation) {
+      setFormData({
+        citation_no: selectedCitation.citation_no || "",
+        full_name: selectedCitation.full_name || "",
+        birthday: selectedCitation.birthday || "",
+        age: selectedCitation.age || "",
+        gender: selectedCitation.gender || "",
+        full_address: selectedCitation.full_address || "",
+        driv_lic: selectedCitation.driv_lic || "",
+        exp_date: selectedCitation.exp_date || "",
+        reg_owner: selectedCitation.reg_owner || "",
+        reg_address: selectedCitation.reg_address || "",
+        veh_type: selectedCitation.veh_type || "",
+        plate_no: selectedCitation.plate_no || "",
+        crt_reg_no: selectedCitation.crt_reg_no || "",
+        franc_no: selectedCitation.franc_no || "",
+        place_of_viola: selectedCitation.place_of_viola || "",
+        date_of_viola: selectedCitation.date_of_viola || "",
+        time_of_viola: selectedCitation.time_of_viola || "",          
+        amounts: selectedCitation.amounts || "",
+        remarks: selectedCitation.remarks || "",
+        app_officer: selectedCitation.app_officer || "",        
+          // ✅ Keep selected violations instead of resetting them
+        violation_ids: selectedCitation.violations?.map((v) => v.id) || [],
+    
+      });
+    }
+  }, [selectedCitation]);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value = e.target.value
+    .toLowerCase() // Convert all text to lowercase first
+    .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+    setFormData({ ...formData, [e.target.name]: value});   
   };
 
   const handleViolationChange = (e) => {
@@ -327,8 +364,10 @@ const CitationForm = ({ onSuccess }) => {
         <div className="mb-4">
           <label className="block text-gray-700 font-medium">Amounts</label>
           <input
-            type="text"
+            type="number"
             name="amounts"
+            step="0.01"  // ✅ Allows decimal points (e.g., 10.50)
+            min="0"  // ✅ Prevents negative values
             value={formData.amounts}
             onChange={handleChange}
             className="w-full h-10 p-2 border rounded-md resize-none"
@@ -383,6 +422,9 @@ const CitationForm = ({ onSuccess }) => {
           <button type="submit" className="bg-cyan text-white w-full py-2 px-4 rounded">
             Save Citation
           </button>
+
+          <button onClick={handleExtend} className="bg-cyan text-white w-full py-2 px-4 rounded">Extend Citation</button>;
+
         </div>
       </div>
       </form>

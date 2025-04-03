@@ -1,30 +1,27 @@
 import React, { useEffect, useState } from "react";
 import { fetchCitations } from "./shared/api";
 
-const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh }) => {
+const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh, onExtend }) => {
   const [citations, setCitations] = useState([]);
   const [error, setError] = useState(null);
 
+  // 🔄 Fetch citations when component mounts or `refresh` changes
   useEffect(() => {
-    console.log("🔄 Refresh Triggered:", refresh);
-
     const loadCitations = async () => {
-      setCitations([]); // Clear old citations before fetching new ones
+      setCitations([]); // Clear old data before fetching
       setError(null); // Reset error state
 
       try {
-        console.log("⏳ Fetching citations...");
-        const data = await fetchCitations(`?timestamp=${new Date().getTime()}`);
+        const data = await fetchCitations();
         setCitations(data);
-        console.log("✅ Citations loaded:", data);
       } catch (err) {
-        console.error("❌ Fetch error:", err);
         setError("Error fetching citations. Please try again.");
       }
     };
+    
 
-    loadCitations(); // Fetch citations on mount & refresh update
-  }, [refresh]); // Dependency ensures re-fetching when `refresh` changes // Dependency ensures re-fetching when `refresh` changes
+    loadCitations();
+  }, [refresh]);
 
   return (
     <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">
@@ -36,6 +33,7 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh }) =>
             <th className="p-3 text-left">Full Name</th>
             <th className="p-3 text-left">Date of Violation</th>
             <th className="p-3 text-left">Violations</th>
+            <th className="p-3 text-left">Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -48,10 +46,7 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh }) =>
           ) : (
             citations.map((c) => (
               <React.Fragment key={c.citation_no}>
-                <tr 
-                  onClick={() => setSelectedCitationNo(c.citation_no)}
-                  className="cursor-pointer hover:bg-gray-100 transition"
-                >
+                <tr key={c.citation_no} className="border-b">
                   <td className="p-3">{c.citation_no}</td>
                   <td className="p-3">{c.full_name}</td>
                   <td className="p-3">{c.date_of_viola}</td>
@@ -66,6 +61,24 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh }) =>
                       <span className="text-gray-500">No violations</span>
                     )}
                   </td>
+
+                  {/* Extend Button */}     
+                  <td className="p-3 flex gap-2">
+                  <button 
+                    onClick={() => onExtend(c)} 
+                    className="bg-cyan text-white px-4 py-2 rounded">
+                    Extend
+                  </button>
+
+                     {/* Future Reduce Button */}
+                    <button
+                      className="bg-green text-white px-3 py-1 rounded hover:bg-green-600"
+                      disabled
+                    >
+                      Reduce (Future)
+                    </button>
+                  </td>
+
                 </tr>
                 <tr>
                   <td colSpan="4" className="py-2">

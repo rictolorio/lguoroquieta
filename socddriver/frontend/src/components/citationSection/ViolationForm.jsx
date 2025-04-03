@@ -9,6 +9,7 @@ const ViolationForm = () => {
 
   const handleChange = (e) => {
     setViolationData({ ...violationData, [e.target.name]: e.target.value });
+    
   };
 
   const handleSubmit = async (e) => {
