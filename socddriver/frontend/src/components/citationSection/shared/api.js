@@ -1,5 +1,6 @@
 // api.js
 import axios from "axios";
+
 const API_URL = "http://127.0.0.1:8000";
 
 // Fetch all citations
@@ -7,14 +8,14 @@ export const fetchCitations = async () => {
   try {
     const res = await fetch(`${API_URL}/citations/`);
     if (!res.ok) {
-      throw new Error("Failed to fetch citations");
+      throw new Error(`Failed to fetch citations: ${res.statusText}`);
     }
-    const data = await res.json(); // Correct this line
-    console.log("Fetched data:", data); // Log the fetched data
+    const data = await res.json();
+    console.log("Fetched Citations:", data); // Log fetched data for debugging
     return data;
   } catch (error) {
-    console.error("Error fetching citations:", error);
-    throw error; // Rethrow the error to handle it in the component
+    console.error("Error fetching citations:", error.message);
+    throw error;
   }
 };
 
@@ -23,11 +24,13 @@ export const fetchViolations = async () => {
   try {
     const res = await fetch(`${API_URL}/violations/`);
     if (!res.ok) {
-      throw new Error("Failed to fetch violations");
+      throw new Error(`Failed to fetch violations: ${res.statusText}`);
     }
-    return await res.json();
+    const data = await res.json();
+    console.log("Fetched Violations:", data);
+    return data;
   } catch (error) {
-    console.error("Error fetching violations:", error);
+    console.error("Error fetching violations:", error.message);
     throw error;
   }
 };
@@ -35,10 +38,22 @@ export const fetchViolations = async () => {
 // Create a citation (including violations)
 export const createCitation = async (citationData) => {
   try {
-    const response = await axios.post(`${API_URL}/citations/`, citationData); // Fix the endpoint if necessary
+    const response = await axios.post(`${API_URL}/citations/`, citationData);
     return response.data;
   } catch (error) {
-    console.error("Error creating citation:", error);
-    throw error;
+    if (error.response) {
+      // The request was made and the server responded with an error status
+      console.error("Server Error (Response Data):", error.response.data);
+      console.error("Status Code:", error.response.status);
+      throw new Error(`Server Error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
+    } else if (error.request) {
+      // The request was made but no response was received
+      console.error("No Response Received:", error.request);
+      throw new Error("No response from the server. Check your API.");
+    } else {
+      // Something else happened
+      console.error("Request Setup Error:", error.message);
+      throw new Error(`Request Setup Error: ${error.message}`);
+    }
   }
 };

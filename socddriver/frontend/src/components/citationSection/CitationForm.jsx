@@ -56,9 +56,15 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+     // Capitalize first letter of each word
+     const formattedValue = value
+     .toLowerCase() // Convert all text to lowercase first
+     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+
     setFormData((prev) => ({
       ...prev,
-      [name]: value
+      [name]: formattedValue
     }));
   };
 
@@ -74,6 +80,8 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log("Submitting Citation Data:", formData); // Debugging
+
     try {
       if (!violations.length) {
         setError("No violations available. Please check the violations list.");
@@ -81,7 +89,8 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
       }
       
       const response = await createCitation(formData);
-
+      console.log("Citation Created:", response);
+      
       if (response?.citation_no) {
         setSuccess("Citation successfully created!");
         setFormData({
@@ -121,6 +130,7 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
     <div className="h-screen flex flex-col">
       <div className="flex-grow overflow-auto p-4">
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+         
           {/* Citation No */}
           <div className="mb-4">
             <label className="block text-gray-700 font-medium">Citation No</label>
@@ -139,23 +149,87 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
             <h2 className="font-medium text-lg mb-2">Personal Information</h2>
             <div className="grid grid-cols-2 gap-4">
               <div className="mb-4">
-                <label className="block text-gray-700">Full Name</label>
+                <label className="block text-gray-700 font-medium">Full Name</label>
                 <input
                   type="text"
                   name="full_name"
-                  value={formData.full_name}
+                  value={formData.full_name || ""}
                   onChange={handleChange}
                   className="w-full h-10 p-2 border rounded-md"
                 />
               </div>
+              
+               {/* Full Address */}
               <div className="mb-4">
-                <label className="block text-gray-700">Birthday</label>
+                <label className="block text-gray-700 font-medium">Full Address</label>
+                <input
+                  type="text"
+                  name="full_address"
+                  value={formData.full_address || ""}
+                  onChange={handleChange}
+                className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+               {/* Gender */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Gender</label>
+                <select
+                  name="gender"
+                  value={formData.gender || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                >
+                  <option value="">Select Gender</option>
+                  <option value="Male">Male</option>
+                  <option value="Female">Female</option>
+                </select>
+              </div>
+
+               {/* Age */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Age</label>
+                <input
+                  type="number"
+                  name="age"
+                  value={formData.age || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>              
+              
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Birthday</label>
                 <input
                   type="date"
                   name="birthday"
-                  value={formData.birthday}
+                  value={formData.birthday  || ""}
                   onChange={handleChange}
                   className="w-full h-10 p-2 border rounded-md"
+                />
+              </div>
+
+               {/* Driver's License */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Driver's License</label>
+                <input
+                  type="text"
+                  name="driv_lic"
+                  value={formData.driv_lic || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+               {/* Expiration Date */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Expiration Date</label>
+                <input
+                  type="date"
+                  name="exp_date"
+                  value={formData.exp_date || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
                 />
               </div>
             </div>
@@ -163,78 +237,184 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
 
           {/* Vehicle Information Group */}
           <div className="col-span-2">
-            <h2 className="font-medium text-lg mb-2">Vehicle Information</h2>
+            <h2 className="font-medium text-lg mb-2 font-medium">Vehicle Information</h2>
             <div className="grid grid-cols-2 gap-4">
+
+               {/* Registered Owner */}
               <div className="mb-4">
-                <label className="block text-gray-700">Vehicle Type</label>
+                <label className="block text-gray-700 font-medium">Registered Owner</label>
+                <input
+                  type="text"
+                  name="reg_owner"
+                  value={formData.reg_owner || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+               {/* Registered Address */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Registered Address</label>
+                <input
+                  type="text"
+                  name="reg_address"
+                  value={formData.reg_address || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+              {/* Vehicle Type */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Vehicle Type</label>
                 <input
                   type="text"
                   name="veh_type"
-                  value={formData.veh_type}
+                  value={formData.veh_type || ""}
                   onChange={handleChange}
                   className="w-full h-10 p-2 border rounded-md"
                 />
               </div>
+
+              {/* Plate No. */}   
               <div className="mb-4">
-                <label className="block text-gray-700">Plate No.</label>
+                <label className="block text-gray-700 font-medium">Plate No.</label>
                 <input
                   type="text"
                   name="plate_no"
-                  value={formData.plate_no}
+                  value={formData.plate_no || ""}
                   onChange={handleChange}
                   className="w-full h-10 p-2 border rounded-md"
                 />
               </div>
-            </div>
-          </div>
 
-          {/* Violation Selection */}
-          <div className="w-full">
-            <label className="block text-gray-700">Violations</label>
-            <div className="border p-2 rounded-md h-20 overflow-y-auto space-y-2">
-              {violations.map((violation) => (
-                <label key={violation.id} className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    value={violation.id}
-                    checked={formData.violation_ids.includes(violation.id)}
-                    onChange={handleViolationChange}
+               {/* Certificate of Registration */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Certificate of Registration</label>
+                <input
+                  type="text"
+                  name="crt_reg_no"
+                  value={formData.crt_reg_no || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+               {/* Franchise No. */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Franchise No.</label>
+                <input
+                  type="text"
+                  name="franc_no"
+                  value={formData.franc_no || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+               {/* Place of Violation */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Place Of Violation</label>
+                <input
+                  type="text"
+                  name="place_of_viola"
+                  value={formData.place_of_viola || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+              {/* Date of Violation */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Date of Violation</label>
+                <input
+                  type="date"
+                  name="date_of_viola"
+                  value={formData.date_of_viola || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+              {/* Time of Violation */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Time of Violation</label>
+                <input
+                  type="time"
+                  name="time_of_viola"
+                  value={formData.time_of_viola || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>
+
+               {/* Amounts */}
+              <div className="mb-4">
+                <label className="block text-gray-700 font-medium">Amounts</label>
+                <input
+                  type="number"
+                  name="amounts"
+                  step="0.01"  // ✅ Allows decimal points (e.g., 10.50)
+                  min="0"  // ✅ Prevents negative values
+                  value={formData.amounts || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md resize-none"
+                />
+              </div>            
+                
+              {/* Violation Selection */}
+              <div className="mb-4">
+                        <label className="block text-gray-700 font-medium">Violations</label>
+                        <div className="border p-2 rounded-md h-50 overflow-y-auto space-y-2">
+                          {violations.map((violation) => (
+                            <label key={violation.id} className="flex items-center space-x-2">
+                              <input
+                                type="checkbox"
+                                value={violation.id}
+                                checked={formData.violation_ids.includes(violation.id) || false}
+                                onChange={handleViolationChange}
+                              />
+                              <span>{violation.or_sec_no} - {violation.descriptions}</span>
+                            </label>
+                          ))}
+                        </div>
+                      </div>
+
+       
+              {/* Remarks  */}
+              <div className="mb-4">
+                <div className="mb-4 w-full">
+                  <label className="block text-gray-700 font-medium">Remarks</label>
+                  <textarea
+                    name="remarks"
+                    value={formData.remarks || ""}
+                    onChange={handleChange}
+                    className="w-full h-20 p-2 border rounded-md"
                   />
-                  <span>{violation.or_sec_no} - {violation.descriptions}</span>
-                </label>
-              ))}
+                </div> 
+
+              {/* Apprehending Officer */}
+              <div className="w-full mb-4">
+                <label className="block text-gray-700 font-medium">App Officer</label>
+                <input
+                  type="text"
+                  name="app_officer"
+                  value={formData.app_officer || ""}
+                  onChange={handleChange}
+                  className="w-full h-10 p-2 border rounded-md"
+                />
+              </div>   
             </div>
           </div>
-
-          {/* Remarks & Officer */}
-          <div className="w-full flex gap-4">
-            <div className="mb-4 w-full">
-              <label className="block text-gray-700">Remarks</label>
-              <textarea
-                name="remarks"
-                value={formData.remarks}
-                onChange={handleChange}
-                className="w-full h-20 p-2 border rounded-md"
-              />
-            </div>
-            <div className="w-full mb-4">
-              <label className="block text-gray-700">App Officer</label>
-              <input
-                type="text"
-                name="app_officer"
-                value={formData.app_officer}
-                onChange={handleChange}
-                className="w-full h-10 p-2 border rounded-md"
-              />
-            </div>
-          </div>
-
-          {/* Action Buttons */}
-          <div className="flex gap-4">
+           {/* Action Buttons */}
+           <div className="w-full h-30">
             <button type="submit" className="bg-cyan text-white w-full py-2 rounded">
               {isExtending ? "Extend Citation" : "Save Citation"}
             </button>
           </div>
+        </div>           
+
+         
         </form>
       </div>
 
