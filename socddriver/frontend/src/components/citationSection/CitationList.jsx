@@ -26,70 +26,74 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh, onEx
   return (
     <div className="overflow-x-auto bg-white p-6 rounded-lg shadow-lg">
       {error && <div className="text-red-500 mb-4">{error}</div>}
-      <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
-        <thead className="bg-cyan text-white">
-          <tr>
-            <th className="p-3 text-left">Citation No</th>
-            <th className="p-3 text-left">Full Name</th>
-            <th className="p-3 text-left">Date of Violation</th>
-            <th className="p-3 text-left">Violations</th>
-            <th className="p-3 text-left">Actions</th>
-          </tr>
-        </thead>
-        <tbody>
-          {citations.length === 0 ? (
+      {/* Table Wrapper with fixed header and scrollable body */}
+      <div className="relative">
+        {/* Table Header */}
+        <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
+          <thead className="bg-cyan text-white sticky top-0 z-10">
             <tr>
-              <td colSpan="4" className="text-center p-4 text-gray-500">
-                No citations available.
-              </td>
+              <th className="p-3 text-left">Citation No</th>
+              <th className="p-3 text-left">Full Name</th>
+              <th className="p-3 text-left">Date of Violation</th>
+              <th className="p-3 text-left">Violations</th>
+              <th className="p-3 text-left">Actions</th>
             </tr>
-          ) : (
-            citations.map((c) => (
-              <React.Fragment key={c.citation_no}>
-                <tr key={c.citation_no} className="border-b">
-                  <td className="p-3">{c.citation_no}</td>
-                  <td className="p-3">{c.full_name}</td>
-                  <td className="p-3">{c.date_of_viola}</td>
-                  <td className="p-3">
-                    {c.violations?.length > 0 ? (
-                      <ul className="list-disc pl-4">
-                        {c.violations.map((v, index) => (
-                          <li key={index}>{v.or_sec_no} - {v.descriptions}</li>
-                        ))}
-                      </ul>
-                    ) : (
-                      <span className="text-gray-500">No violations</span>
-                    )}
-                  </td>
-
-                  {/* Extend Button */}     
-                  <td className="p-3 flex gap-2">
-                  <button 
-                    onClick={() => onExtend(c)} 
-                    className="bg-cyan text-white px-4 py-2 rounded">
-                    Extend
-                  </button>
-
-                     {/* Future Reduce Button */}
-                    <button
-                      className="bg-green text-white px-3 py-1 rounded hover:bg-green-600"
-                      disabled
-                    >
-                      Reduce (Future)
-                    </button>
-                  </td>
-
-                </tr>
+          </thead>
+        </table>
+  
+        {/* Scrollable Body */}
+        <div className="max-h-90 overflow-y-auto">
+          <table className="w-full border border-gray-300 rounded-lg overflow-hidden">
+            <tbody>
+              {citations.length === 0 ? (
                 <tr>
-                 
+                  <td colSpan="5" className="text-center p-4 text-gray-500">
+                    No citations available.
+                  </td>
                 </tr>
-              </React.Fragment>
-            ))
-          )}
-        </tbody>
-      </table>
+              ) : (
+                citations.slice(0, 8).map((c) => (
+                  <tr key={c.citation_no} className="border-b">
+                    <td className="p-3">{c.citation_no}</td>
+                    <td className="p-3">{c.full_name}</td>
+                    <td className="p-3">{c.date_of_viola}</td>
+                    <td className="p-3">
+                      {c.violations?.length > 0 ? (
+                        <ul className="list-disc pl-4">
+                          {c.violations.map((v, index) => (
+                            <li key={index}>{v.or_sec_no} - {v.descriptions}</li>
+                          ))}
+                        </ul>
+                      ) : (
+                        <span className="text-gray-500">No violations</span>
+                      )}
+                    </td>
+                    <td className="p-3 flex gap-2">
+                      <button
+                        onClick={() => onExtend(c)}
+                        className="bg-cyan text-white px-4 py-2 rounded"
+                      >
+                        Extend
+                      </button>
+  
+                      {/* Future Reduce Button */}
+                      <button
+                        className="bg-green text-white px-3 py-1 rounded hover:bg-green-600"
+                        disabled
+                      >
+                        Reduce (Future)
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
     </div>
   );
-};
-
+  
+  
+}  
 export default CitationList;

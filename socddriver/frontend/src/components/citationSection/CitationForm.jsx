@@ -115,9 +115,9 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
   
 
   return (
-    <div className="h-screen flex flex-col">
-      <div className="flex-grow overflow-auto p-4">
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 w-full h-full gap-4">
+    // <div className="max-w-3xl max-h-3xl mx-auto p-6 bg-white rounded-lg shadow-md">
+      <div className="flex flex-col h-screen p-4 space-y-4 overflow-auto ">
+        <form onSubmit={handleSubmit} className="flex flex-col space-y-4 flex-grow">
          
           {/* Citation No */}
           <div className="mb-4">
@@ -413,7 +413,7 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
           {error && <div className="text-red-500 text-center">{error}</div>}
           {success && <div className="text-green-500 text-center">{success}</div>}
       </div>     
-    </div>
+    // </div>
   );
 };
 
