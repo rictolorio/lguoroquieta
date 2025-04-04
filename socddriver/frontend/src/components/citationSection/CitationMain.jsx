@@ -19,7 +19,7 @@ const CitationMain = () => {
   };
 
   return (
-    <div className="grid grid-cols-2 gap-6 p-6 h-screen">
+    <div className="grid grid-cols-2 gap-6 p-6 h-screen v-screen">
       {/* Left Side - Citation Form */}
       <div className="bg-white p-6 rounded-lg shadow-lg">
         <h2 className="text-2xl font-bold text-gray-700 mb-4">{formTitle}</h2>

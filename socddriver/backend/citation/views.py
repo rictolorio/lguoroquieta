@@ -19,6 +19,25 @@ class CitationViewSet(viewsets.ModelViewSet):
             }, status=201)
         return Response(serializer.errors, status=400)
 
+    def update(self, request, *args, **kwargs):
+        # Handling update of Citation and its associated Violations
+        citation = self.get_object()  # Get the existing citation
+        serializer = self.get_serializer(citation, data=request.data, partial=True)
+
+        if serializer.is_valid():
+            citation = serializer.save()  # Update citation
+
+            # Now, handle violations update
+            new_violations = request.data.get('violation_ids', [])
+            citation.violations.set(Violation.objects.filter(id__in=new_violations))  # Update the violations
+
+            return Response({
+                'id': citation.id,
+                'citation_no': citation.citation_no,
+                'message': 'Citation and violations successfully updated!'
+            })
+        return Response(serializer.errors, status=400)
+
 
 class ViolationViewSet(viewsets.ModelViewSet):
     queryset = Violation.objects.all()

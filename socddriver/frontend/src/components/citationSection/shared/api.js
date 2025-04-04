@@ -59,25 +59,22 @@ export const createCitation = async (citationData) => {
 };
 
 // Update an existing citation (extend)
-export const updateCitation = async (citationId, citationData) => {
+export const updateCitation = async (id, formData) => {
   try {
-    const response = await axios.put(`${API_URL}/citations/${citationId}/`, citationData);
-    return response.data;
-  } catch (error) {
-    if (error.response) {
-      // The request was made and the server responded with an error status
-      console.error("Server Error (Response Data):", error.response.data);
-      console.error("Status Code:", error.response.status);
-      throw new Error(`Server Error: ${error.response.status} - ${JSON.stringify(error.response.data)}`);
-    } else if (error.request) {
-      // The request was made but no response was received
-      console.error("No Response Received:", error.request);
-      throw new Error("No response from the server. Check your API.");
-    } else {
-      // Something else happened
-      console.error("Request Setup Error:", error.message);
-      throw new Error(`Request Setup Error: ${error.message}`);
+    const response = await fetch(`http://127.0.0.1:8000/citations/${id}/`, {  // Use ID
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(formData),
+    });
+
+    const data = await response.json();
+    if (!response.ok) {
+      throw new Error(`Server Error: ${response.status} - ${JSON.stringify(data)}`);
     }
+    return data;
+  } catch (error) {
+    console.error("Update error:", error);
+    throw error;
   }
 };
 

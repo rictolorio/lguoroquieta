@@ -1,31 +1,19 @@
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { fetchViolations, createCitation, updateCitation } from "./shared/api";
 
-const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
-  const [formData, setFormData] = useState({
-    citation_no: "",
-    full_name: "",
-    birthday: "",
-    age: "",
-    gender: "",
-    full_address: "",
-    driv_lic: "",
-    exp_date: "",
-    reg_owner: "",
-    reg_address: "",
-    veh_type: "",
-    plate_no: "",
-    crt_reg_no: "",
-    franc_no: "",
-    place_of_viola: "",
-    date_of_viola: "",
-    time_of_viola: "",
-    amounts: "",
-    remarks: "",
-    app_officer: "",
-    violation_ids: [],
-  });
 
+const initialFormState = {citation_no: "", full_name: "", birthday: "", age: "", gender: "", full_address: "", driv_lic: "", exp_date: "",
+                          reg_owner: "", reg_address: "", veh_type: "", plate_no: "", crt_reg_no: "", franc_no: "", place_of_viola: "",
+                          date_of_viola: "", time_of_viola: "", amounts: "", remarks: "", app_officer: "", violation_ids: [],
+};
+
+// Function to reset the form
+const resetForm = () => {
+  return { ...initialFormState }; // Return a fresh copy
+};
+
+const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
+  const [formData, setFormData] = useState(resetForm());
   const [violations, setViolations] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -49,10 +37,11 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
     if (selectedCitation && selectedCitation.citation_no) {
       setFormData({
         ...selectedCitation,  // Spread existing citation data to populate form
-        violation_ids: selectedCitation.violations.map((v) => v.id)
-       
+        violation_ids: selectedCitation.violations.map((v) => v.id)       
       });
-    }   
+    } else {
+      setFormData(resetForm()); // Reset when there's no selected citation
+    }      
   }, [selectedCitation]);
 
   const handleChange = (e) => {
@@ -84,53 +73,34 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     console.log("Submitting Citation Data:", formData); // Debugging
-
+  
     try {
       if (!formData.violation_ids.length) {
-        setError("No violations available. Please check the violations list.");
+        setError("No violations selected. Please select at least one violation.");
         return;
       }
-
-      // const response = await createCitation(formData);
-      // console.log("Citation Created:", response);
-      
-      
+  
       let response;
-      if (selectedCitation && selectedCitation.citation_id) {
+  
+      if (selectedCitation && selectedCitation.id) {
         // Update existing citation
-        response = await updateCitation(selectedCitation.citation_id, formData);
+        console.log(`🟠 Updating citation ID: ${selectedCitation.id}`);
+        console.log("🟡 Sending updated violation_ids:", formData.violation_ids);
+        response = await updateCitation(selectedCitation.id, {
+          ...formData, 
+          violation_ids: formData.violation_ids 
+        });
       } else {
         // Create new citation
         response = await createCitation(formData);
       }
-
+  
       if (response?.citation_no) {
         setSuccess(selectedCitation ? "Citation successfully updated!" : "Citation successfully created!");
-        
+  
         // Reset form on success
-        setFormData({
-          citation_no: "",
-          full_name: "",
-          birthday: "",
-          age: "",
-          gender: "",
-          full_address: "",
-          driv_lic: "",
-          exp_date: "",
-          reg_owner: "",
-          reg_address: "",
-          veh_type: "",
-          plate_no: "",
-          crt_reg_no: "",
-          franc_no: "",
-          place_of_viola: "",
-          date_of_viola: "",
-          time_of_viola: "",
-          amounts: "",
-          remarks: "",
-          app_officer: "",
-          violation_ids: [],
-        });
+        setFormData(resetForm()); 
+  
         if (onSuccess) {
           onSuccess();
         }
@@ -142,6 +112,7 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
       setError(error.message || "An error occurred while submitting the citation.");
     }
   };
+  
 
   return (
     <div className="h-screen flex flex-col">
@@ -431,8 +402,8 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
           
            {/* Action Buttons */}
            <div className="w-full h-30">
-           <button type="submit">
-              {selectedCitation && selectedCitation.citation_id ? "Update Citation" : "Save Citation"}
+           <button type="submit" className="w-full bg-cyan text-white px-4 py-2 rounded">
+            {selectedCitation ? "Update Citation" : "Save Citation"}
             </button>
           </div>
          </div> 
