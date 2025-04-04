@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { fetchViolations, createCitation } from "./shared/api";
+import { fetchViolations, createCitation, updateCitation } from "./shared/api";
 
 const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
   const [formData, setFormData] = useState({
@@ -29,29 +29,30 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
   const [violations, setViolations] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [isExtending, setIsExtending] = useState(false);
-
-  useEffect(() => {
+  // const [isExtending, setIsExtending] = useState(false); 
+  
+  
+  useEffect(() =>{
     const loadViolations = async () => {
       try {
         const data = await fetchViolations();
         setViolations(data);
       } catch (error) {
         console.error("Error loading violations:", error);
+        setError("Failed to load violations");
       }
     };
-
     loadViolations();
-
-    if (selectedCitation) {
+  })
+  
+  useEffect(() => {
+    if (selectedCitation && selectedCitation.citation_no) {
       setFormData({
-        ...selectedCitation,
-        violation_ids: selectedCitation.violations?.map((v) => v.id) || [],
+        ...selectedCitation,  // Spread existing citation data to populate form
+        violation_ids: selectedCitation.violations.map((v) => v.id)
+       
       });
-      setIsExtending(true);
-    } else {
-      setIsExtending(false);
-    }
+    }   
   }, [selectedCitation]);
 
   const handleChange = (e) => {
@@ -64,18 +65,20 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
 
     setFormData((prev) => ({
       ...prev,
-      [name]: formattedValue
+      [name]: formattedValue,
     }));
   };
 
   const handleViolationChange = (e) => {
     const id = parseInt(e.target.value, 10);
-    setFormData((prev) => ({
-      ...prev,
-      violation_ids: e.target.checked
+    const { checked } = e.target;
+
+    setFormData((prev) => {
+     const updatedViolations = checked    
         ? [...prev.violation_ids, id]
-        : prev.violation_ids.filter((v) => v !== id),
-    }));
+        : prev.violation_ids.filter((v) => v !== id)
+      return { ...prev, violation_ids: updatedViolations };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -83,16 +86,28 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
     console.log("Submitting Citation Data:", formData); // Debugging
 
     try {
-      if (!violations.length) {
+      if (!formData.violation_ids.length) {
         setError("No violations available. Please check the violations list.");
         return;
       }
+
+      // const response = await createCitation(formData);
+      // console.log("Citation Created:", response);
       
-      const response = await createCitation(formData);
-      console.log("Citation Created:", response);
       
+      let response;
+      if (selectedCitation && selectedCitation.citation_id) {
+        // Update existing citation
+        response = await updateCitation(selectedCitation.citation_id, formData);
+      } else {
+        // Create new citation
+        response = await createCitation(formData);
+      }
+
       if (response?.citation_no) {
-        setSuccess("Citation successfully created!");
+        setSuccess(selectedCitation ? "Citation successfully updated!" : "Citation successfully created!");
+        
+        // Reset form on success
         setFormData({
           citation_no: "",
           full_name: "",
@@ -116,20 +131,22 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
           app_officer: "",
           violation_ids: [],
         });
-        onSuccess();
+        if (onSuccess) {
+          onSuccess();
+        }
       } else {
-        setError(response.detail || "Failed to create citation");
+        setError(response.detail || "Failed to submit citation");
       }
     } catch (error) {
       console.error("Submission error:", error);
-      setError("An error occurred while creating the citation.");
+      setError(error.message || "An error occurred while submitting the citation.");
     }
   };
 
   return (
     <div className="h-screen flex flex-col">
       <div className="flex-grow overflow-auto p-4">
-        <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-4">
+        <form onSubmit={handleSubmit} className="grid grid-cols-2 w-full h-full gap-4">
          
           {/* Citation No */}
           <div className="mb-4">
@@ -237,7 +254,7 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
 
           {/* Vehicle Information Group */}
           <div className="col-span-2">
-            <h2 className="font-medium text-lg mb-2 font-medium">Vehicle Information</h2>
+            <h2 className="text-lg mb-2 font-medium">Vehicle Information</h2>
             <div className="grid grid-cols-2 gap-4">
 
                {/* Registered Owner */}
@@ -365,22 +382,27 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
               {/* Violation Selection */}
               <div className="mb-4">
                         <label className="block text-gray-700 font-medium">Violations</label>
-                        <div className="border p-2 rounded-md h-50 overflow-y-auto space-y-2">
-                          {violations.map((violation) => (
-                            <label key={violation.id} className="flex items-center space-x-2">
-                              <input
-                                type="checkbox"
-                                value={violation.id}
-                                checked={formData.violation_ids.includes(violation.id) || false}
-                                onChange={handleViolationChange}
-                              />
-                              <span>{violation.or_sec_no} - {violation.descriptions}</span>
-                            </label>
-                          ))}
+                          <div className="mb-4 max-h-48 overflow-y-auto border rounded-md p-2">
+                          {violations.length > 0 ? (
+                            violations.map((violation) => (
+                              <label key={violation.id} className="flex items-center space-x-2">
+                                <input
+                                  type="checkbox"
+                                  value={violation.id}
+                                  checked={formData.violation_ids.includes(violation.id)}
+                                  onChange={handleViolationChange}
+                                  className="mr-2"
+                                />
+                                <span>{violation.or_sec_no} - {violation.descriptions}</span>
+                              </label>
+                            ))
+                          ) : (
+                            <p>No violations available.</p>
+                          )}
+                         
                         </div>
                       </div>
 
-       
               {/* Remarks  */}
               <div className="mb-4">
                 <div className="mb-4 w-full">
@@ -406,21 +428,20 @@ const CitationForm = ({ onSuccess, setRefresh, selectedCitation }) => {
               </div>   
             </div>
           </div>
+          
            {/* Action Buttons */}
            <div className="w-full h-30">
-            <button type="submit" className="bg-cyan text-white w-full py-2 rounded">
-              {isExtending ? "Extend Citation" : "Save Citation"}
+           <button type="submit">
+              {selectedCitation && selectedCitation.citation_id ? "Update Citation" : "Save Citation"}
             </button>
           </div>
-        </div>           
-
-         
+         </div> 
         </form>
-      </div>
 
-      {/* Error and Success Messages */}
-      {error && <div className="text-red-500 text-center">{error}</div>}
-      {success && <div className="text-green-500 text-center">{success}</div>}
+           {/* Error and Success Messages */}
+          {error && <div className="text-red-500 text-center">{error}</div>}
+          {success && <div className="text-green-500 text-center">{success}</div>}
+      </div>     
     </div>
   );
 };

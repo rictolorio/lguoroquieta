@@ -81,9 +81,7 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh, onEx
 
                 </tr>
                 <tr>
-                  {/* <td colSpan="4" className="py-2">
-                    <hr className="border-gray-300" />
-                  </td> */}
+                 
                 </tr>
               </React.Fragment>
             ))
