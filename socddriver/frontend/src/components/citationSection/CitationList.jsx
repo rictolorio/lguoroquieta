@@ -52,7 +52,7 @@ const CitationList = ({ selectedCitationNo, setSelectedCitationNo, refresh, onEx
                   </td>
                 </tr>
               ) : (
-                citations.slice(0, 8).map((c) => (
+                citations.slice(0, 16).map((c) => (
                   <tr key={c.citation_no} className="border-b">
                     <td className="p-3">{c.citation_no}</td>
                     <td className="p-3">{c.full_name}</td>

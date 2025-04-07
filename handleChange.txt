@@ -1,0 +1,13 @@
+ const handleChange = (e) => {
+    const { name, value } = e.target;
+
+     // Capitalize first letter of each word
+     const formattedValue = value
+     .toLowerCase() // Convert all text to lowercase first
+     .replace(/\b\w/g, (char) => char.toUpperCase()); // Capitalize first letter of each word
+
+    setFormData((prev) => ({
+      ...prev,
+      [name]: formattedValue,
+    }));
+  };

@@ -13,7 +13,7 @@ const CitationMain = () => {
   const extendCitation = (citation) => {
     setSelectedCitation({
       ...citation,
-      date_of_viola: new Date().toISOString().split("T")[0], // Default to today's date
+      // date_of_viola: new Date().toISOString().split("T")[0], // Default to today's date
     });
     setFormTitle("Extend Citation"); // Change title
   };
